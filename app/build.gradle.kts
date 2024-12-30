@@ -6,9 +6,9 @@ plugins {
 
 android {
     namespace = "com.iucoding.jetpackcomposemastercourse"
-    compileSdk = 34
+	compileSdk = 35
 
-    defaultConfig {
+	defaultConfig {
         applicationId = "com.iucoding.jetpackcomposemastercourse"
         minSdk = 24
         targetSdk = 34
@@ -49,7 +49,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
+	implementation(libs.androidx.adaptive.android)
+	testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
