@@ -7,9 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.iucoding.jetpackcomposemastercourse.compose.LazyMindMap
 import com.iucoding.jetpackcomposemastercourse.compose.TodoScreen
 import com.iucoding.jetpackcomposemastercourse.ui.theme.JetpackComposeMasterCourseTheme
 
@@ -22,13 +28,19 @@ class MainActivity : ComponentActivity() {
 			JetpackComposeMasterCourseTheme {
 				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 					val viewModel: MainViewModel = viewModel()
-					val todos = viewModel.state.collectAsStateWithLifecycle(emptyList())
-					TodoScreen(
+					val items = viewModel.mindMapItems.collectAsStateWithLifecycle(emptyList())
+					var mindMapOffset by remember {
+						mutableStateOf(IntOffset.Zero)
+					}
+					LazyMindMap(
+						items = items.value,
+						mindMapOffset = mindMapOffset,
+						onDrag = { delta ->
+							mindMapOffset += delta
+						},
 						modifier = Modifier
 							.fillMaxSize()
-							.padding(innerPadding),
-						todos = todos.value,
-						onAction = viewModel::onAction
+							.padding(innerPadding)
 					)
 				}
 			}
