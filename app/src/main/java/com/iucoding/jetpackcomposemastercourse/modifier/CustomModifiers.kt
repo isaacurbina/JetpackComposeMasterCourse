@@ -7,9 +7,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
+import androidx.compose.ui.node.LayoutModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -35,6 +43,45 @@ fun Modifier.printConstraints(tag: String): Modifier {
 	}
 }
 
+data class NegativePaddingElement(
+	private val horizontal: Dp
+) : ModifierNodeElement<NegativePaddingNode>() {
+
+	override fun create(): NegativePaddingNode {
+		return NegativePaddingNode(horizontal)
+	}
+
+	override fun update(node: NegativePaddingNode) {
+		TODO("Not yet implemented")
+	}
+
+}
+
+class NegativePaddingNode(
+	private val horizontal: Dp
+) : LayoutModifierNode, Modifier.Node(), CompositionLocalConsumerModifierNode {
+
+	override fun MeasureScope.measure(
+		measurable: Measurable,
+		constraints: Constraints
+	): MeasureResult {
+		val density = currentValueOf(LocalDensity)
+		val px = with(density) {
+			horizontal.roundToPx()
+		}
+		val placeable = measurable.measure(
+			constraints = constraints.copy(
+				minWidth = constraints.minWidth + 2 * px,
+				maxWidth = constraints.maxWidth + 2 * px
+			)
+		)
+		return layout(placeable.width, placeable.height) {
+			placeable.place(0, 0)
+		}
+	}
+}
+
+@Deprecated("use NegativePaddingNode instead")
 @Composable
 fun Modifier.negativePadding(horizontal: Dp): Modifier {
 	val density = LocalDensity.current
