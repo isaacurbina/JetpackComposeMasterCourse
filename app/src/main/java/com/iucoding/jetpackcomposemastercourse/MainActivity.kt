@@ -4,19 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntOffset
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.iucoding.jetpackcomposemastercourse.compose.LazyMindMap
-import com.iucoding.jetpackcomposemastercourse.compose.TodoScreen
+import com.iucoding.jetpackcomposemastercourse.disposableeffect.DisposableEffectDemo
 import com.iucoding.jetpackcomposemastercourse.ui.theme.JetpackComposeMasterCourseTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,21 +26,25 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			JetpackComposeMasterCourseTheme {
 				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-					val viewModel: MainViewModel = viewModel()
-					val items = viewModel.mindMapItems.collectAsStateWithLifecycle(emptyList())
-					var mindMapOffset by remember {
-						mutableStateOf(IntOffset.Zero)
+					var toggle by remember {
+						mutableStateOf(false)
 					}
-					LazyMindMap(
-						items = items.value,
-						mindMapOffset = mindMapOffset,
-						onDrag = { delta ->
-							mindMapOffset += delta
-						},
-						modifier = Modifier
-							.fillMaxSize()
-							.padding(innerPadding)
-					)
+					Column {
+						if (!toggle) {
+							DisposableEffectDemo(
+								modifier = Modifier
+									.weight(1f)
+									.padding(innerPadding)
+							)
+						}
+						Button(
+							onClick = {
+								toggle = !toggle
+							}
+						) {
+							Text("Toggle")
+						}
+					}
 				}
 			}
 		}
